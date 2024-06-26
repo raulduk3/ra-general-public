@@ -1,6 +1,6 @@
 import { DefaultSeoProps } from "next-seo";
 
-const description = "Host your second brain with NextJS"
+const description = "Information database and journal of Richard Álvarez";
 // See https://www.npmjs.com/package/next-seo for more options
 const config: DefaultSeoProps = {
   titleTemplate: "%s | INFO",
@@ -11,7 +11,7 @@ const config: DefaultSeoProps = {
     type: 'website',
     locale: 'en_IE',
     title: 'RÁ',
-    description: 'Information database and journal of Richard Álvarez',
+    description,
   },
   additionalLinkTags: [
     {
