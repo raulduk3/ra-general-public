@@ -11,33 +11,28 @@ import {Element} from 'hast-util-select'
 import { renderToStaticMarkup } from "react-dom/server"
 import NotePreview from '../components/misc/note-preview'
 import { fromHtml } from 'hast-util-from-html'
+import { convertWithPandoc } from './pandocConversion';  // Add this import
 
-
-export async function markdownToHtml(markdown: string, currSlug: string) {
+export async function markdownToHtml(markdown, currSlug) {
+  // Update markdown links
   markdown = updateMarkdownLinks(markdown, currSlug);
 
-  // get mapping of current links
-  const links = (getLinksMapping())[currSlug] as string[]
-  const linkNodeMapping = new Map<string, Element>();
-  for (const l of links) {
-    const post = getPostBySlug(l, ['title', 'content']);
-    const node = createNoteNode(post.title, post.content)
-    linkNodeMapping[l] = node
-  }
+  // Optionally convert with Pandoc for LaTeX support
+  const pandocHtml = await convertWithPandoc(markdown, currSlug);
 
+  // Create the markdown pipeline with remark and rehype
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
-    .use(remarkRehype)
     .use(rehypeSanitize)
-    .use(rehypeRewrite, {
-      selector: 'a',
-      rewrite: async (node) => rewriteLinkNodes(node, linkNodeMapping, currSlug)
-    })
+    .use(rehypeRewrite)
     .use(rehypeStringify)
-    .process(markdown)
-  let htmlStr = file.toString()
-  return htmlStr;
+    .process(markdown);
+
+  const html = file.toString();
+
+  // Return a combination of Pandoc and Remark content
+  return `${pandocHtml}${html}`;
 }
 
 export function getMDExcerpt(markdown: string, length: number = 500) {

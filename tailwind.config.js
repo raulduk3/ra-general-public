@@ -12,6 +12,10 @@ module.exports = {
         'accent-7': '#333',
         success: '#0070f3',
         cyan: '#79FFE1',
+        background: '#FFFFFF', 
+        text: '#333333',        
+        primary: '#0070f3',     
+        secondary: '#eaeaea',   
       },
       spacing: {
         28: '7rem',
